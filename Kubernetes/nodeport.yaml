@@ -1,0 +1,62 @@
+kind: Service 
+apiVersion: v1 
+metadata:
+  name: hostname-service 
+spec:
+  # Expose the service on a static port on each node
+  # so that we can access the service from outside the cluster 
+  type: NodePort
+
+  # When the node receives a request on the static port (30163)
+  # "select pods with the label 'app' set to 'echo-hostname'"
+  # and forward the request to one of them
+  selector:
+    app: echo-hostname 
+
+  ports:
+    # Three types of ports for a service
+    # nodePort - a static port assigned on each the node
+    # port - port exposed internally in the cluster
+    # targetPort - the container port to send requests to
+    - nodePort: 30163
+      port: 8080 
+      targetPort: 80
+
+
+# Kubernetes has three Object Types you should know about
+
+# Pods - runs one or more closely related containers
+# Services - sets up networking in a Kubernetes cluster
+# Deployment - Maintains a set of identical pods, ensuring that they have the correct config and that the right number of them exist.
+
+
+
+# Pods:
+
+# Runs a single set of containers
+# Good for one-off dev purposes
+# Rarely used directly in production
+
+# Service
+
+# The set of Pods targeted by a Service is usually determined by a selector.
+# An abstract way to expose an application running on a set of Pods as a network service.
+# With Kubernetes you don't need to modify your application to use an unfamiliar service discovery mechanism. 
+# Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance 
+# across them.
+
+
+
+# Deployment:
+
+# Runs a set of identical pods
+# Monitors the state of each pod, updating as necessary
+# Good for dev
+# Good for production
+# And I would agree with other answers, forget about Pods and just use Deployment. Why? Look at the second bullet point, it monitors the state of each pod, updating as necessary.
+
+
+
+
+
+

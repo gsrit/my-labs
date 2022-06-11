@@ -1,0 +1,73 @@
+# **********************************************************************************************************
+# ********************************************* P O D ******************************************************
+# **********************************************************************************************************
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ""
+  labels:
+    name: ""
+  namespace: ""
+  annotations: []
+  generateName: ""
+spec:
+  selector:
+    matchLabels:
+      app: tomcat
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: tomcat
+    spec:
+      containers:
+      - name: tomcat
+        image: tomcat:9.0
+        ports:
+        - containerPort: 8080
+  ? "// See 'The spec schema' for details."
+  : ~
+
+# **********************************************************************************************************
+# ************************************ D E P L O Y M E N T  ************************************************
+# **********************************************************************************************************
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: tomcat-deployment222
+spec:
+  selector:
+    matchLabels:
+      app: tomcat
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: tomcat
+    spec:
+      containers:
+      - name: tomcat
+        image: tomcat:9.0
+        ports:
+        - containerPort: 8080
+
+
+
+
+
+# Pod is a collection of containers and basic object of Kuberntes. All containers of pod lie in same node.
+#  > Not suitable for production
+#  > No rolling updates
+
+
+# **************************** D E P L O Y M E N T  ****************************
+# Deployment is a kind of controller in Kubernetes.
+#Controllers use a Pod Template that you provide to create the Pods for which it is responsible. 
+#Deployment creates a ReplicaSet which in turn make sure that, CurrentReplicas is always same as desiredReplicas .
+
+########### Advantages ################
+# > You can rollout and rollback your changes using deployment
+# > Monitors the state of each pod
+# > Best suitable for production
+# > Supports rolling updates

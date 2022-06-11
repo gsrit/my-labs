@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-node-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/os
+            operator: In
+            values:
+            - linux
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: another-node-label-key
+            operator: In
+            values:
+            - another-node-label-value
+  containers:
+  - name: with-node-affinity
+    image: k8s.gcr.io/pause:2.0
+
+
+#The affinity/anti-affinity language is more expressive. nodeSelector only selects nodes with all the specified labels. 
+#Affinity/anti-affinity gives you more control over the selection logic.
+#You can indicate that a rule is soft or preferred, so that the scheduler still schedules the Pod even if it can't find a matching node.
+#You can constrain a Pod using labels on other Pods running on the node (or other topological domain), 
+#instead of just node labels, which allows you to define rules for which Pods can be co-located on a node.
+
+#https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#built-in-node-labels
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: type
+                operator: In
+                values:
+                - t2medium
+      containers:
+      - image: nginx
+        name: nginx
+
+# https://itnext.io/kubernetes-node-affinity-placing-pods-on-specific-nodes-8ea918dda9b9
+
+# Apply the above deployment yaml file to your cluster and verify the pod is running on the choosen node:
+# Verify that the pod is running on the chosen node having the same key value pair (ex: type:t2medium).
+
+# kubectl get pods --all-namespaces -o wide
+
+
+

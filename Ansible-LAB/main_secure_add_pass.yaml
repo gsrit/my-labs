@@ -1,0 +1,25 @@
+
+
+#Next, run the mkpasswd command below to generate an encrypted password (--method=sha-512).
+
+# mkpasswd --method=sha-512
+
+---
+- name: Ansible Create user functionlity module demo
+  hosts: web
+# Defining the remote server where the ansible create user module will manage the objects
+  remote_user: ubuntu   # Using Remote user as ubuntu
+  tasks:
+    - name: Add the user 'Matt' with a specific uid and a primary group of 'sudo'
+      ansible.builtin.user:
+        name: matt
+        comment: matt_ata
+        uid: 1053
+        group: sudo
+        password: '$6$kjPn3KClxO.Lujw$BjDr2y4vvJK3Q.C/nLET.A/FD9OxN6DNASmLetapq9LiXVVlTrYnvlEGuITZiVkV3JhX.vbsZ68/hnbdRsYnx1'
+        createhome: yes     # Defaults to yes
+        home: /home/matt    # Defaults to /home/<username>
+
+
+# ansible-playbook main_secure.yaml -u ubuntu --become
+
